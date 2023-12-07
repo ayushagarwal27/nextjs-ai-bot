@@ -9,8 +9,11 @@ import { Plus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { dark } from "@clerk/themes";
+import { useTheme } from "next-themes";
 
 const Navbar = () => {
+  const { theme } = useTheme();
   const [showAddEditNoteDialog, setShowAddEditNoteDialog] = useState(false);
 
   return (
@@ -25,6 +28,7 @@ const Navbar = () => {
             <UserButton
               afterSignOutUrl="/"
               appearance={{
+                baseTheme: theme === "dark" ? dark : undefined,
                 elements: { avatarBox: { width: "2.5rem", height: "2.5rem" } },
               }}
             />
