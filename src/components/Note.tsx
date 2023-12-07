@@ -1,5 +1,7 @@
+"use client";
+
 import { Note as NoteModal } from "@prisma/client";
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import {
   Card,
   CardContent,
@@ -7,12 +9,14 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
+import AddEditNoteDialog from "./AddEditNoteDialog";
 
 interface NoteProps {
   note: NoteModal;
 }
 
 const Note: FC<NoteProps> = ({ note }) => {
+  const [showEditDialog, setShowEditDialog] = useState(false);
   const wasUpdated = note.updatedAt > note.createdAt;
 
   const createdUpdatedAtTimestamp = (
@@ -20,17 +24,27 @@ const Note: FC<NoteProps> = ({ note }) => {
   ).toDateString();
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{note.title}</CardTitle>
-        <CardDescription>
-          {createdUpdatedAtTimestamp} {wasUpdated && "(updated)"}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <p className="whitespace-pre-line"> {note.content}</p>
-      </CardContent>
-    </Card>
+    <>
+      <Card
+        className="cursor-pointer transition-shadow hover:shadow-lg"
+        onClick={() => setShowEditDialog(true)}
+      >
+        <CardHeader>
+          <CardTitle>{note.title}</CardTitle>
+          <CardDescription>
+            {createdUpdatedAtTimestamp} {wasUpdated && "(updated)"}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="whitespace-pre-line"> {note.content}</p>
+        </CardContent>
+      </Card>
+      <AddEditNoteDialog
+        open={showEditDialog}
+        setOpen={setShowEditDialog}
+        noteToEdit={note}
+      />
+    </>
   );
 };
 
