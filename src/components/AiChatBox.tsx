@@ -1,7 +1,7 @@
-import React, { FC } from "react";
+import React, { FC, useEffect, useRef } from "react";
 import { useChat } from "ai/react";
 import { cn } from "@/lib/utils";
-import { Bot, XCircle } from "lucide-react";
+import { Bot, Trash, XCircle } from "lucide-react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Message } from "ai";
@@ -24,6 +24,21 @@ const AiChatBox: FC<AiChatBoxProps> = ({ open, onClose }) => {
     error,
   } = useChat();
 
+  const inputRef = useRef<HTMLInputElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages]);
+
+  useEffect(() => {
+    if (open) {
+      inputRef.current?.focus();
+    }
+  }, [open]);
+
   return (
     <div
       className={cn(
@@ -35,16 +50,27 @@ const AiChatBox: FC<AiChatBoxProps> = ({ open, onClose }) => {
         <XCircle size={30} />
       </button>
       <div className="flex h-[600px] flex-col rounded border bg-background shadow-xl">
-        <div className="h-full mt-3 px-3 overflow-y-auto">
+        <div className="mt-3 h-full overflow-y-auto px-3" ref={scrollRef}>
           {messages.map((message) => (
             <ChatMessage message={message} key={message.id} />
           ))}
         </div>
         <form onSubmit={handleSubmit} className="m-3 flex gap-3">
+          <Button
+            title="Clear chat"
+            variant={"outline"}
+            size={"icon"}
+            className="shrink-0"
+            type="button"
+            onClick={() => setMessages([])}
+          >
+            <Trash />
+          </Button>
           <Input
             value={input}
             onChange={handleInputChange}
             placeholder="Say something..."
+            ref={inputRef}
           />
           <Button type="submit">Send</Button>
         </form>
