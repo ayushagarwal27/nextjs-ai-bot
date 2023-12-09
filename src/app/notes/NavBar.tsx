@@ -11,6 +11,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { dark } from "@clerk/themes";
 import { useTheme } from "next-themes";
+import AiChatButton from "@/components/AiChatButton";
 
 const Navbar = () => {
   const { theme } = useTheme();
@@ -36,6 +37,7 @@ const Navbar = () => {
             <Button onClick={() => setShowAddEditNoteDialog(true)}>
               <Plus size={20} className="mr-2" /> Add Note
             </Button>
+            <AiChatButton />
           </div>
         </div>
       </div>
