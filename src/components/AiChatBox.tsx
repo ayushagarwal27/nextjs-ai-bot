@@ -39,6 +39,8 @@ const AiChatBox: FC<AiChatBoxProps> = ({ open, onClose }) => {
     }
   }, [open]);
 
+  const lastMessageIsUser = messages[messages.length - 1]?.role === "user";
+
   return (
     <div
       className={cn(
@@ -54,6 +56,25 @@ const AiChatBox: FC<AiChatBoxProps> = ({ open, onClose }) => {
           {messages.map((message) => (
             <ChatMessage message={message} key={message.id} />
           ))}
+          {isLoading && lastMessageIsUser && (
+            <ChatMessage
+              message={{ role: "assistant", content: "Thinking..." }}
+            />
+          )}
+          {error && (
+            <ChatMessage
+              message={{
+                role: "assistant",
+                content: "Something went wrong. Please try again",
+              }}
+            />
+          )}
+          {!error && messages.length === 0 && (
+            <div className="flex h-full items-center justify-center gap-3">
+              <Bot />
+              Ask the AI a question about your notes
+            </div>
+          )}
         </div>
         <form onSubmit={handleSubmit} className="m-3 flex gap-3">
           <Button
@@ -81,7 +102,11 @@ const AiChatBox: FC<AiChatBoxProps> = ({ open, onClose }) => {
 
 export default AiChatBox;
 
-function ChatMessage({ message: { role, content } }: { message: Message }) {
+function ChatMessage({
+  message: { role, content },
+}: {
+  message: Pick<Message, "role" | "content">;
+}) {
   const { user } = useUser();
   const isAiMessage = role === "assistant";
 
